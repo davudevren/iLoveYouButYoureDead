@@ -14,6 +14,15 @@ export default class Master extends Component {
     }
   }
 
+  createGame = () => {
+    console.log('create new Game')
+    var newGameRef = ref.child('games/').push()
+    this.setState({gameId: newGameRef.key})
+    newGameRef.set({
+      state: "preparing"
+    })
+  }
+
   startNextRound = () => {
     console.log('start Next Round')
     var participants = this.state.game.participants
@@ -40,64 +49,33 @@ export default class Master extends Component {
     })
   }
 
-  die = () => {
-    var participants = this.state.game.participants
-    var nextTarget = ""
-    for(var key in participants) {
-      if (participants.hasOwnProperty(key)) {
-        if (participants[key].uid === this.state.user.uid) {
-          console.log('you died - ' + participants[key].target)
-          nextTarget = participants[key].target
-          ref.child('games/' + this.state.gameId + '/participants/' + key).update({
-            state: "dead",
-            target: ""
-          })
-        }
-      }
-    }
-    //find killer:
-    for(var killerKey in participants) {
-      if (participants.hasOwnProperty(killerKey)) {
-        if (participants[killerKey].target === this.state.user.displayName) {
-          ref.child('games/' + this.state.gameId + '/participants/' + killerKey).update({
-            target: nextTarget
-          })
-        }
-      }
-    }
-  }
-
   componentWillMount() {
-    var gameRef = ref.child('games/' + this.state.gameId);
+    var gameRef = ref.child('games').limitToLast(1);
     gameRef.on('value', (snapshot) => {
       var game = snapshot.val()
-      this.setState({
-        game: game,
-      })
+      for (var key in game){
+        if (game.hasOwnProperty(key)){
+          this.setState({
+            game: game[key],
+            gameId: key,
+          })
+        }
+      }
     });
   }
 
   componentWillUpdate(nextProps, nextState) {
-    var participants = nextState.game.participants
-    var found = false
-    for(var key in participants) {
-      if (participants.hasOwnProperty(key)) {
-        if (participants[key].uid === this.state.user.uid) {
-          found = true
-          if (!this.state.isInGame || participants[key].target !== nextState.target) {
-            this.setState({isInGame: true, target: participants[key].target, isAlive: participants[key].state})
-          }
-        }
-      }
-    }
-    if (!found && this.state.isInGame) {
-      this.setState({isInGame: false})
-    }
+
   }
 
   render () {
-    console.log(this.state.game)
+    console.log(this.state)
     var gameController = (<div>loading</div>);
+    var noGame = (
+      <div>
+        <button className="btn btn-primary" onClick={() => this.createGame()}>create Game</button>
+      </div>
+    );
     var runningGame = (
       <div>
         <h1>GAME STARTED</h1>
@@ -116,6 +94,7 @@ export default class Master extends Component {
         gameController = runningGame
         break;
       default:
+        gameController = noGame
         break;
     }
     return (

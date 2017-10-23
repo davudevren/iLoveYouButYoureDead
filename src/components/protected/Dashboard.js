@@ -72,12 +72,17 @@ export default class Dashboard extends Component {
         this.setState({user: user})
       }
     }
-    var gameRef = ref.child('games/' + this.state.gameId);
+    var gameRef = ref.child('games').limitToLast(1);
     gameRef.on('value', (snapshot) => {
       var game = snapshot.val()
-      this.setState({
-        game: game,
-      })
+      for (var key in game){
+        if (game.hasOwnProperty(key)){
+          this.setState({
+            game: game[key],
+            gameId: key,
+          })
+        }
+      }
     });
   }
 
@@ -90,7 +95,7 @@ export default class Dashboard extends Component {
           found = true
           if (!this.state.isInGame || participants[key].target !== nextState.target) {
             this.setState({isInGame: true, target: participants[key].target, isAlive: participants[key].state === "alive" ? true : false})
-          } 
+          }
         }
       }
     }
