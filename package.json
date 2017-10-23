@@ -1,5 +1,5 @@
 {
-  "name": "react-router-firebase-auth",
+  "name": "i-love-you-but-youre-dead",
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
@@ -17,5 +17,17 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
-  }
+  },
+  "description": "I love you but youre dead.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davudevren/iLoveYouButYoureDead.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/davudevren/iLoveYouButYoureDead/issues"
+  },
+  "homepage": "https://github.com/davudevren/iLoveYouButYoureDead#readme"
 }
